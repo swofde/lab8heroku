@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+import requests
 
 from .models import Greeting
 
@@ -17,3 +18,15 @@ def db(request):
     greetings = Greeting.objects.all()
 
     return render(request, "db.html", {"greetings": greetings})
+
+def page(request):
+    url = request.GET.get('url', "")
+    print("RECEIVED URL:", url)
+    if not url:
+        return HttpResponse('<form><input type="text" name="url"><input type="submit"></form>')
+    else:
+        r = requests.get(url)
+        result = ""
+        if r.status_code == 200:
+            result = r.content
+        return HttpResponse(result)
